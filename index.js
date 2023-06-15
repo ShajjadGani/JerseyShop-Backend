@@ -9,7 +9,7 @@ app.use(cors())
 app.use(express.json())
 
 const uri =
-  'mongodb+srv://Shajjad_Gani:gani1997@cluster0.hagtamf.mongodb.net/?retryWrites=true&w=majority'
+  'mongodb+srv://Shajjad_Gani:UNmOg2k9tFzuC7gk@cluster0.hagtamf.mongodb.net/?retryWrites=true&w=majority'
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -20,6 +20,7 @@ async function run() {
     await client.connect()
     const database = client.db('JerseyShop')
     const serviceCollection = database.collection('Jersey')
+    const AccessoriesCollection = database.collection('Accessories')
     console.log('database connected')
     // send services to the database
     app.post('/services', async (req, res) => {
@@ -29,6 +30,12 @@ async function run() {
       res.json(result)
     })
 
+    app.post('/Accessories', async (req, res) => {
+      const service = req.body
+      const result = await AccessoriesCollection.insertOne(service)
+      console.log(result)
+      res.json(result)
+    })
     // update data into products collection
     app.put('/services/:id([0-9a-fA-F]{24})', async (req, res) => {
       const id = req.params.id.trim()
@@ -59,7 +66,12 @@ async function run() {
       const service = await cursor.toArray()
       res.send(service)
     })
-
+    
+    app.get('/Accessories', async (req, res) => {
+      const cursor = AccessoriesCollection.find({})
+      const service = await cursor.toArray()
+      res.send(service)
+    })
     // get a single service from service collection
     app.get('/services/:id([0-9a-fA-F]{24})', async (req, res) => {
       const id = req.params.id.trim()
